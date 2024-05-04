@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Price Prediction</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+</head>
+<body class="d-flex flex-column min-vh-100 " style="background: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url('static/img2.png') no-repeat center center fixed; background-size: cover;">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+            <div class="container" style="max-width: 90%;">
+                <a class="navbar-brand" href="#">
+                    Flight Price Predictor<img src="static/img.png" alt="Plane Icon" class="navbar-plane-icon" style="width: 120px; height: 110px;">
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/"><i class="fas fa-home"></i> Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/index"><i class="fas fa-calculator"></i> Predictor</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/signup"><i class="fas fa-user-plus"></i> Signup</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+   
+
+    <main class="container mt-5 pt-5 flex-grow-1">
+        <h1 style="padding-top: 40px;">Welcome to RR Flight Price Prediction</h1>
+        <p>Enter your flight details to predict prices::</p>
+        <form action="/predict" method="post">
+            <div class="form-group">
+                <label for="Dep_Time">Departure Time:</label>
+                <input type="datetime-local" class="form-control" name="Dep_Time" required>
+            </div>
+            <div class="form-group">
+                <label for="Arrival_Time">Arrival Time:</label>
+                <input type="datetime-local" class="form-control" name="Arrival_Time" required>
+            </div>
+            <div class="form-group">
+                <label for="Source">Source:</label>
+                <select class="form-control" name="Source" required>
+                    <option value="Delhi">Delhi</option>
+                    <option value="Kolkata">Kolkata</option>
+                    <option value="Bangalore">Bangalore</option>
+                    <option value="Mumbai">Mumbai</option>
+                    <option value="Chennai">Chennai</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Destination">Destination:</label>
+                <select class="form-control" name="Destination" required>
+                    <option value="Cochin">Cochin</option>
+                    <option value="Bangalore">Bangalore</option>
+                    <option value="New Delhi">New Delhi</option>
+                    <option value="Hyderabad">Hyderabad</option>
+                    <option value="Kolkata">Kolkata</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="stops">Total Stops:</label>
+                <select class="form-control" name="stops" required>
+                    <option value="0">Non-Stop</option>
+                    <option value="1">1 Stop</option>
+                    <option value="2">2 Stops</option>
+                    <option value="3">3 Stops</option>
+                    <option value="4">4 Stops</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="airline">Airline:</label>
+                <select class="form-control" name="airline" required>
+                    <option value="Jet Airways">Jet Airways</option>
+                    <option value="IndiGo">IndiGo</option>
+                    <option value="Air India">Air India</option>
+                    <option value="Multiple carriers">Multiple carriers</option>
+                    <option value="SpiceJet">SpiceJet</option>
+                    <option value="Vistara">Vistara</option>
+                    <option value="Air Asia">Air Asia</option>
+                    <option value="GoAir">GoAir</option>
+                    <option value="Multiple carriers Premium economy">Multiple carriers Premium economy</option>
+                    <option value="Vistara Premium economy">Vistara Premium economy</option>
+                    <option value="Trujet">Trujet</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Predict Price</button>
+        </form>
+    </main>
+
+    <div class="d-flex justify-content-center align-items-center" style="flex-grow: 1; font-size: 48px;">
+        {{ prediction_text }}
+    </div>
+
+
+    <footer class="mt-auto py-3 bg-dark text-white text-center">
+        <div class="container">
+            ©2024 Raahul Sallagunta Rohan Reddy Adarsh | University at Buffalo
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#predictForm').submit(function(event) {
+                event.preventDefault(); // Prevent the form from submitting via the browser.
+                var form = $(this);
+                $.ajax({
+                    type: form.attr('method'),
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function(data) {
+                        $('#predictionResult').text(data); // Display the result in the predictionResult div.
+                    },
+                    error: function() {
+                        $('#predictionResult').text('Failed to predict price. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
